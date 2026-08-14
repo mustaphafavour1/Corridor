@@ -27,7 +27,7 @@ export function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-7 w-full rounded-control border border-hairline bg-surface-1 pl-7 pr-3 text-xs text-content placeholder:text-content-dim focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+        className="h-8 w-full rounded-control border border-hairline bg-surface-1 pl-7 pr-3 text-[11px] text-content placeholder:text-content-dim focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
       />
     </div>
   );
@@ -41,7 +41,7 @@ export const TextInput = React.forwardRef<
   <input
     ref={ref}
     className={cn(
-      "h-7 w-full rounded-control border border-hairline bg-surface-1 px-2.5 text-xs text-content placeholder:text-content-dim focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-[var(--ring)]",
+      "h-9 w-full rounded-control border border-hairline bg-surface-1 px-3 text-[13px] text-content placeholder:text-content-dim focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-[var(--ring)]",
       className,
     )}
     {...props}
@@ -71,7 +71,7 @@ export function Select({
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           "appearance-none rounded-control border border-hairline bg-surface-1 pr-6 font-medium text-content-2 focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-[var(--ring)] cursor-pointer",
-          size === "xs" ? "h-6 pl-2 text-2xs" : "h-7 pl-2.5 text-xs",
+          size === "xs" ? "h-6 pl-2 text-2xs" : "h-8 pl-2.5 text-[11px]",
         )}
       >
         {opts.map((o) => (

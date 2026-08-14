@@ -26,6 +26,7 @@ import {
   Sheet,
   DetailRow,
   DescriptionList,
+  TotalCount,
 } from "@/components/ui";
 
 const USD: Record<Currency, number> = {
@@ -89,9 +90,10 @@ export default function PartnersPage() {
         <StatCard label="Onboarding" value={isEmpty ? "—" : onboarding} sub="KYB pending" />
       </div>
 
-      {/* Low-liquidity rebalancing suggestions */}
+      {/* Low-liquidity rebalancing suggestions — neutral card; the warning
+          icon + status pills carry the signal, never a coloured card border. */}
       {!isEmpty && atRisk.length > 0 && (
-        <SectionCard className="border-warning/25 bg-warning-soft/30">
+        <SectionCard>
           <SectionHeader
             title={<span className="flex items-center gap-1.5"><AlertTriangle size={13} className="text-warning" /> Low-liquidity — rebalancing suggested</span>}
             caption="Float below threshold on these corridors. Pre-funding requires maker-checker approval."
@@ -149,6 +151,7 @@ export default function PartnersPage() {
             <EmptyState title={isEmpty ? "No partners yet" : "No matches"} message={isEmpty ? "Flip the seed toggle to populate the network." : "Adjust your search or filters."} />
           ) : (
             <>
+              <TotalCount count={filteredPartners.length} noun="partners" />
               <div className="w-full overflow-x-auto">
                 <table className="data-table">
                   <thead>
@@ -209,6 +212,7 @@ export default function PartnersPage() {
             <EmptyState title="No float accounts" message="Flip the seed toggle to view partner liquidity." />
           ) : (
             <>
+              <TotalCount count={floats.length} noun="float accounts" />
               <div className="w-full overflow-x-auto">
                 <table className="data-table">
                   <thead>

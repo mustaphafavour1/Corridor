@@ -56,6 +56,7 @@ const config: Config = {
         content: {
           DEFAULT: "var(--text)",
           2: "var(--text-2)",
+          3: "var(--text-3)",
           muted: "var(--text-muted)",
           faint: "var(--text-faint)",
           dim: "var(--text-dim)",
@@ -80,16 +81,17 @@ const config: Config = {
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       borderRadius: {
-        card: "14px",
-        panel: "12px",
-        control: "8px",
+        card: "0.7rem",
+        panel: "10px",
+        control: "6px",
+        stat: "8px",
         sm: "6px",
       },
       boxShadow: {
-        subtle: "0 1px 2px rgba(0,0,0,0.35)",
-        card: "0 2px 10px rgba(0,0,0,0.28)",
-        pop: "0 12px 34px rgba(0,0,0,0.48)",
-        "accent-glow": "0 4px 20px rgba(192,138,125,0.22)",
+        subtle: "0 1px 2px rgba(0,0,0,0.22)",
+        card: "0 1px 3px rgba(0,0,0,0.16)",
+        pop: "0 12px 34px rgba(0,0,0,0.42)",
+        "accent-glow": "0 4px 20px rgba(192,138,125,0.18)",
       },
       ringColor: {
         DEFAULT: "var(--ring)",

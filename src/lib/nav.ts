@@ -15,6 +15,7 @@ import {
   FileText,
   ScrollText,
   Settings2,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,6 +25,9 @@ export interface NavItem {
   icon: LucideIcon;
   module: ModuleKey;
   built: boolean;
+  /** Bypasses the permission check — used for Settings so a previewed,
+   *  narrowly-scoped persona can always reach the role switch to reset. */
+  alwaysVisible?: boolean;
 }
 
 export interface NavGroup {
@@ -58,8 +62,8 @@ export const NAV: NavGroup[] = [
     label: "Risk & Control",
     items: [
       { label: "Compliance & Risk", href: "/compliance", icon: ShieldCheck, module: "compliance", built: false },
-      { label: "Approvals", href: "/approvals", icon: Stamp, module: "approvals", built: false },
-      { label: "Analytics", href: "/analytics", icon: BarChart3, module: "analytics", built: false },
+      { label: "Approvals", href: "/approvals", icon: Stamp, module: "approvals", built: true },
+      { label: "Analytics", href: "/analytics", icon: BarChart3, module: "analytics", built: true },
     ],
   },
   {
@@ -70,6 +74,7 @@ export const NAV: NavGroup[] = [
       { label: "Reports", href: "/reports", icon: FileText, module: "reports", built: false },
       { label: "Audit Log", href: "/audit", icon: ScrollText, module: "audit", built: false },
       { label: "Platform Config", href: "/config", icon: Settings2, module: "config", built: false },
+      { label: "Settings", href: "/settings", icon: Settings, module: "config", built: true, alwaysVisible: true },
     ],
   },
 ];

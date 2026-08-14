@@ -17,6 +17,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+import { cn } from "@/lib/utils";
 
 // Chart palette — mirrors the --chart-* tokens (SVG attrs need literal colours).
 export const CHART = {
@@ -32,7 +33,7 @@ export const CHART = {
   axis: "#6e8579",
 };
 
-const AXIS = { fontSize: 9, fill: CHART.axis };
+const AXIS = { fontSize: 10, fill: CHART.axis };
 const axisProps = { tick: AXIS, axisLine: false, tickLine: false } as const;
 
 /* ─────────────────────────── Area trend ─────────────────────────── */
@@ -222,16 +223,31 @@ export function Sparkline({
 export function RankBars({
   items,
   valueFormatter,
+  labelWidth = "w-16",
+  mono = true,
 }: {
   items: { label: string; value: number; color?: string }[];
   valueFormatter?: (v: number) => string;
+  /** Tailwind width class for the label column — widen for longer labels
+   *  (e.g. partner names) than the default, tuned for short corridor codes. */
+  labelWidth?: string;
+  mono?: boolean;
 }) {
   const max = Math.max(...items.map((i) => i.value), 1);
   return (
     <div className="space-y-2">
       {items.map((it, i) => (
         <div key={i} className="flex items-center gap-2">
-          <span className="w-16 shrink-0 truncate text-2xs text-content-muted font-mono">{it.label}</span>
+          <span
+            className={cn(
+              "shrink-0 truncate text-2xs text-content-muted",
+              labelWidth,
+              mono && "font-mono",
+            )}
+            title={it.label}
+          >
+            {it.label}
+          </span>
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-3">
             <div
               className="h-full rounded-full"

@@ -73,6 +73,7 @@ export default function OverviewPage() {
   return (
     <div className="space-y-4">
       <PageHeader
+        hero
         title="Overview"
         subtitle={`Live money-movement across ${corridors.length} corridor${corridors.length === 1 ? "" : "s"} in scope`}
       >
@@ -271,7 +272,7 @@ function ApprovalRow({
     <div className="flex items-center gap-3 py-2">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <Badge tone="accent">{approval.type}</Badge>
+          <Badge tone="neutral">{approval.type}</Badge>
           <span className="font-mono text-3xs text-content-faint">{approval.id}</span>
         </div>
         <p className="mt-1 truncate text-xs text-content-2">{approval.summary}</p>

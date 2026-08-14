@@ -34,9 +34,9 @@ export function Pagination({
   const to = Math.min(page * perPage, totalItems);
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 pt-3 mt-1 border-t border-hairline-faint">
-      <span className="text-2xs text-content-faint">
-        Showing <span className="text-content-muted tabular">{from}–{to}</span> of{" "}
-        <span className="text-content-muted tabular">{totalItems}</span> items
+      <span className="text-sm text-content-muted">
+        Showing <span className="text-content-2 tabular">{from}–{to}</span> of{" "}
+        <span className="text-content-2 tabular">{totalItems}</span> items
       </span>
       <div className="flex items-center gap-1.5">
         <div className="flex items-center overflow-hidden rounded-control border border-hairline">
@@ -58,7 +58,7 @@ export function Pagination({
             </button>
           </div>
         </div>
-        <span className="text-2xs text-content-faint mr-1">per page</span>
+        <span className="text-sm text-content-muted mr-1">per page</span>
         <button
           onClick={() => onPageChange(Math.max(page - 1, 1))}
           disabled={page <= 1}
@@ -70,7 +70,7 @@ export function Pagination({
         <span className="flex h-6 min-w-6 items-center justify-center rounded-control border border-accent/40 bg-accent-soft px-1.5 text-2xs font-semibold text-accent-hi tabular">
           {page}
         </span>
-        <span className="text-2xs text-content-faint">of {totalPages}</span>
+        <span className="text-sm text-content-muted">of {totalPages}</span>
         <button
           onClick={() => onPageChange(Math.min(page + 1, totalPages))}
           disabled={page >= totalPages}
@@ -81,6 +81,16 @@ export function Pagination({
         </button>
       </div>
     </div>
+  );
+}
+
+/** Prominent count above a data table/list — e.g. "82 transfers". Primary
+ *  ink, 16-18px semibold, sits just above the header row. */
+export function TotalCount({ count, noun }: { count: number; noun: string }) {
+  return (
+    <p className="text-xl font-semibold text-accent-hi tabular mb-2.5">
+      {count.toLocaleString()} <span className="font-medium text-content-muted text-sm">{noun}</span>
+    </p>
   );
 }
 

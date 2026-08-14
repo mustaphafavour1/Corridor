@@ -24,10 +24,10 @@ const buttonVariants = cva(
       },
       size: {
         xs: "h-6 px-2 text-2xs",
-        sm: "h-7 px-3 text-xs",
-        md: "h-8 px-3.5 text-xs",
-        lg: "h-9 px-4 text-sm",
-        icon: "h-7 w-7",
+        sm: "h-8 px-3 text-[12px]",
+        md: "h-9 px-3.5 text-[13px]",
+        lg: "h-9 px-4 text-[13px]",
+        icon: "h-8 w-8",
         "icon-sm": "h-6 w-6",
       },
     },
@@ -90,7 +90,10 @@ export function SectionHeader({
   );
 }
 
-/* ─────────────────────────── StatCard ─────────────────────────── */
+/* ─────────────────────────── StatCard ───────────────────────────
+ * Deliberately plain: no icon tiles, no filled delta chips, no coloured
+ * card border. The one "hero" moment (accent=true, at most one per screen)
+ * is carried by the number's ink colour alone — never a coloured edge. */
 export function StatCard({
   label,
   value,
@@ -109,18 +112,20 @@ export function StatCard({
   className?: string;
 }) {
   return (
-    <Card className={cn("p-3.5 relative overflow-hidden", className)}>
-      {accent && (
-        <span className="absolute left-0 top-0 h-full w-[2px] metallic" aria-hidden />
+    <div
+      className={cn(
+        "rounded-stat border border-hairline bg-surface-2 shadow-card p-4",
+        className,
       )}
+    >
       <div className="flex items-center justify-between">
-        <p className="text-2xs uppercase tracking-wide text-content-faint">{label}</p>
+        <p className="text-2xs uppercase tracking-wide text-content-muted">{label}</p>
         {icon && <span className="text-content-faint">{icon}</span>}
       </div>
       <div className="mt-1.5 flex items-end justify-between gap-2">
         <p
           className={cn(
-            "text-2xl font-semibold tabular leading-none",
+            "text-3xl font-semibold tabular leading-none",
             accent ? "text-accent-hi" : "text-content",
           )}
         >
@@ -129,7 +134,7 @@ export function StatCard({
         {delta && <KpiDelta value={delta.value} positiveIsGood={delta.positiveIsGood} />}
       </div>
       {sub && <p className="mt-1.5 text-2xs text-content-faint">{sub}</p>}
-    </Card>
+    </div>
   );
 }
 
@@ -207,21 +212,32 @@ export function Meter({
   );
 }
 
-/* ─────────────────────────── PageHeader ─────────────────────────── */
+/* ─────────────────────────── PageHeader ───────────────────────────
+ * Understated: 18px title, optional 12px muted subtitle, actions right-
+ * aligned. No gradient/icon-box header. Also carries the page's top offset —
+ * ~50px on every screen except the main dashboard, which keeps ~100px for
+ * its greeting/hero moment (pass `hero`). */
 export function PageHeader({
   title,
   subtitle,
+  hero = false,
   children,
 }: {
   title: string;
   subtitle?: string;
+  hero?: boolean;
   children?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-3">
+    <div
+      className={cn(
+        "flex flex-wrap items-end justify-between gap-3",
+        hero ? "mt-[100px]" : "mt-[50px]",
+      )}
+    >
       <div>
-        <h1 className="text-xl font-semibold text-content tracking-tight">{title}</h1>
-        {subtitle && <p className="text-xs text-content-faint mt-0.5">{subtitle}</p>}
+        <h1 className="text-[18px] font-semibold text-content tracking-tight leading-none">{title}</h1>
+        {subtitle && <p className="text-[12px] text-content-muted mt-1.5">{subtitle}</p>}
       </div>
       {children && <div className="flex items-center gap-2 flex-wrap">{children}</div>}
     </div>
