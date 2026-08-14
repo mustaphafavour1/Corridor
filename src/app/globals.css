@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * ─── CORRIDOR — SINGLE SOURCE OF TRUTH FOR COLOUR & DENSITY ───────────────────
+ *  Dark-first. Dirty-green surfaces, rose-gold accent, faint hairline dividers.
+ *  Everything (UI, Recharts, react-day-picker) reads from these variables.
+ * ──────────────────────────────────────────────────────────────────────────────
+ */
+:root {
+  /* Type — Parkinsans loaded via <link> in layout; mono via next/font */
+  --font-parkinsans: "Parkinsans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Surfaces — deep near-black greens stepping up to panel greens */
+  --bg: #131815;
+  --surface-1: #171c19;
+  --surface-2: #1e2521;
+  --surface-3: #28312c;
+  --surface-4: #33403a;
+
+  /* Brand — dirty green */
+  --brand: #51645a;
+  --brand-muted: #6e8579;
+  --brand-soft: #8fa398;
+
+  /* Accent — rose gold (use sparingly) */
+  --accent: #c08a7d;
+  --accent-hi: #e3b7a8;
+  --accent-deep: #a8726a;
+  --accent-contrast: #171c19;
+  --accent-soft: rgba(192, 138, 125, 0.12);
+
+  /* Text */
+  --text: #eaf0ec;
+  --text-2: #b7c4bc;
+  --text-muted: #8fa398;
+  --text-faint: #6e8579;
+  --text-dim: #566b60;
+
+  /* Semantic — deliberately distinct from brand green + rose gold */
+  --success: #3fbe8f;
+  --success-soft: rgba(63, 190, 143, 0.14);
+  --warning: #e0a85b;
+  --warning-soft: rgba(224, 168, 91, 0.14);
+  --danger: #e0564f;
+  --danger-soft: rgba(224, 86, 79, 0.14);
+  --info: #6fa8cc;
+  --info-soft: rgba(111, 168, 204, 0.14);
+  --violet: #9c8cd4;
+  --violet-soft: rgba(156, 140, 212, 0.14);
+
+  /* Hairlines — intentionally very faint */
+  --border: rgba(143, 163, 152, 0.11);
+  --border-faint: rgba(143, 163, 152, 0.055);
+  --border-strong: rgba(143, 163, 152, 0.17);
+
+  /* Focus ring */
+  --ring: rgba(192, 138, 125, 0.55);
+
+  /* Chart series (pulled by themed Recharts wrappers) */
+  --chart-1: #c08a7d; /* rose gold  */
+  --chart-2: #8fa398; /* muted green */
+  --chart-3: #6fa8cc; /* info blue  */
+  --chart-4: #3fbe8f; /* mint       */
+  --chart-5: #e0a85b; /* amber      */
+  --chart-6: #9c8cd4; /* violet     */
+  --chart-grid: rgba(143, 163, 152, 0.10);
+  --chart-axis: #6e8579;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+
+html {
+  /* keep rem at default so spacing utilities stay conventional; type is px-based */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* base font ~10px for a very neat, dense institutional feel */
+  font-size: 10px;
+  line-height: 1.5;
+  background-color: var(--bg);
+  color: var(--text);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tabular, precise numerals for financial data */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+::selection {
+  background: rgba(192, 138, 125, 0.28);
+  color: var(--text);
+}
+
+/* ── Scrollbars — quiet, dark ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-4) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--surface-4);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+  background-clip: content-box;
+}
+
+@layer components {
+  /* ── Metallic rose-gold surface (hero moments only) ── */
+  .metallic {
+    background-image: linear-gradient(
+      135deg,
+      var(--accent-hi) 0%,
+      var(--accent) 42%,
+      var(--accent-deep) 100%
+    );
+  }
+  .metallic-line {
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      var(--accent) 50%,
+      transparent
+    );
+  }
+
+  /* ── Focus ── */
+  .focus-ring {
+    @apply outline-none ring-2 ring-offset-0;
+  }
+
+  /* ── Status badges (semantic; 9px) ── */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-[2px] text-2xs font-medium whitespace-nowrap;
+  }
+
+  /* ── Data tables — 10px body, 9px headers, ultra-faint dividers ── */
+  .data-table {
+    @apply w-full border-collapse;
+  }
+  .data-table thead th {
+    @apply text-2xs font-medium uppercase text-content-faint text-left py-2 pr-3 whitespace-nowrap;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table tbody td {
+    @apply text-xs text-content-muted py-[9px] pr-3 align-middle;
+    border-bottom: 1px solid var(--border-faint);
+  }
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .data-table tbody tr {
+    transition: background-color 0.12s ease;
+  }
+  .data-table tbody tr:hover {
+    background-color: rgba(143, 163, 152, 0.035);
+  }
+  .data-table td.strong {
+    @apply text-content-2 font-medium;
+  }
+  .data-table td.num {
+    @apply tabular text-content-2 font-medium;
+  }
+}
+
+/* ── react-day-picker — themed to brand tokens ── */
+.rdp {
+  --rdp-cell-size: 30px;
+  --rdp-accent-color: var(--accent);
+  --rdp-background-color: var(--accent-soft);
+  --rdp-outline: 2px solid var(--ring);
+  margin: 0;
+  font-size: 11px;
+}
+.rdp-caption_label,
+.rdp-head_cell {
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: none;
+}
+.rdp-head_cell {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rdp-day {
+  color: var(--text-2);
+  border-radius: 8px;
+}
+.rdp-day_today:not(.rdp-day_outside) {
+  color: var(--accent-hi);
+  font-weight: 700;
+}
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: var(--surface-3);
+}
+.rdp-day_selected,
+.rdp-day_selected:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+.rdp-day_range_middle {
+  background-color: var(--accent-soft) !important;
+  color: var(--text) !important;
+}
+.rdp-nav_button {
+  color: var(--text-muted);
+}
+.rdp-nav_button:hover {
+  background-color: var(--surface-3);
+  color: var(--text);
+}
+
+/* ── Recharts polish ── */
+.recharts-cartesian-axis-tick-value {
+  font-size: 9px;
+}
+.recharts-default-tooltip {
+  background: var(--surface-3) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.48) !important;
+  padding: 8px 10px !important;
+}
+.recharts-tooltip-label {
+  color: var(--text-muted) !important;
+  font-size: 9px !important;
+  margin-bottom: 4px !important;
+}
+.recharts-tooltip-item {
+  font-size: 11px !important;
+  padding: 1px 0 !important;
+}
+.recharts-surface:focus {
+  outline: none;
+}
