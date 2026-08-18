@@ -27,6 +27,8 @@ import {
   DetailRow,
   DescriptionList,
   TotalCount,
+  DataTable,
+  type DataTableColumn,
 } from "@/components/ui";
 
 const USD: Record<Currency, number> = {
@@ -69,6 +71,79 @@ export default function PartnersPage() {
   const atRisk = floats.filter((f) => f.status !== "Healthy");
   const avgSuccess = activePartners ? partners.filter((p) => p.status === "Active").reduce((s, p) => s + p.successRate, 0) / activePartners : 0;
   const avgSpeed = activePartners ? Math.round(partners.filter((p) => p.status === "Active").reduce((s, p) => s + p.avgPayoutMins, 0) / activePartners) : 0;
+
+  const partnerColumns: DataTableColumn<PayoutPartner>[] = [
+    {
+      key: "partner",
+      label: "Partner",
+      render: (p) => (
+        <>
+          <span className="strong block text-content-2">{p.name}</span>
+          <span className="font-mono text-3xs text-content-faint">{p.id}</span>
+        </>
+      ),
+    },
+    { key: "country", label: "Country", cellClassName: "text-content-muted", render: (p) => p.countryName },
+    {
+      key: "corridors",
+      label: "Corridors",
+      render: (p) => (
+        <div className="flex flex-wrap gap-1">
+          {p.corridors.length ? (
+            p.corridors.map((c) => (
+              <span key={c} className="rounded bg-surface-3 px-1 py-[1px] font-mono text-3xs text-content-muted">{c}</span>
+            ))
+          ) : (
+            <span className="text-3xs text-content-dim">—</span>
+          )}
+        </div>
+      ),
+    },
+    { key: "rails", label: "Rails", cellClassName: "text-2xs text-content-muted", render: (p) => p.rails.join("·") },
+    { key: "kyb", label: "KYB", render: (p) => <StatusPill status={p.kybStatus} /> },
+    {
+      key: "success",
+      label: "Success",
+      render: (p) =>
+        p.status === "Onboarding" ? (
+          <span className="text-3xs text-content-dim">—</span>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <Meter value={p.successRate} tone={successTone(p.successRate)} className="w-10" />
+            <span className="tabular text-2xs text-content-muted">{formatPct(p.successRate)}</span>
+          </div>
+        ),
+    },
+    { key: "speed", label: "Speed", align: "right", cellClassName: "num text-content-muted", render: (p) => (p.status === "Onboarding" ? "—" : `${p.avgPayoutMins}m`) },
+    { key: "commission", label: "Commission", align: "right", cellClassName: "num", render: (p) => formatPct(p.commissionPct, 2) },
+    { key: "status", label: "Status", render: (p) => <StatusPill status={p.status} /> },
+    { key: "chevron", label: "", cellClassName: "text-content-dim", render: () => <ChevronRight size={13} /> },
+  ];
+
+  const floatColumns: DataTableColumn<FloatAccount>[] = [
+    { key: "id", label: "Account", cellClassName: "font-mono text-2xs text-content-2", render: (f) => f.id },
+    { key: "partner", label: "Partner", cellClassName: "text-content-muted", render: (f) => partners.find((p) => p.id === f.partnerId)?.name ?? f.partnerId },
+    { key: "corridor", label: "Corridor", cellClassName: "font-mono text-2xs", render: (f) => f.corridorCode },
+    { key: "balance", label: "Balance", align: "right", cellClassName: "num", render: (f) => formatMoney(f.balance, f.currency, 0) },
+    { key: "target", label: "Target", align: "right", cellClassName: "num text-content-muted", render: (f) => formatMoney(f.targetBalance, f.currency, 0) },
+    {
+      key: "utilisation",
+      label: "Utilisation",
+      render: (f) => (
+        <div className="flex items-center gap-1.5">
+          <Meter value={f.utilisation} tone={floatTone(f.status)} className="w-14" />
+          <span className="tabular text-2xs text-content-muted">{f.utilisation}%</span>
+        </div>
+      ),
+    },
+    { key: "status", label: "Status", render: (f) => <StatusPill status={f.status} /> },
+    { key: "lastTopUp", label: "Last top-up", align: "right", cellClassName: "text-2xs text-content-faint", render: (f) => formatDate(f.lastToppedUp) },
+    {
+      key: "action",
+      label: "",
+      render: (f) => (canEdit("treasury") && f.status !== "Healthy" ? <Button size="xs" variant="subtle">Top up</Button> : null),
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -153,54 +228,7 @@ export default function PartnersPage() {
             <>
               <TotalCount count={filteredPartners.length} noun="partners" />
               <div className="w-full overflow-x-auto">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Partner</th>
-                      <th>Country</th>
-                      <th>Corridors</th>
-                      <th>Rails</th>
-                      <th>KYB</th>
-                      <th>Success</th>
-                      <th className="text-right">Speed</th>
-                      <th className="text-right">Commission</th>
-                      <th>Status</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pgP.paginated.map((p) => (
-                      <tr key={p.id} className="cursor-pointer" onClick={() => setSelected(p)}>
-                        <td>
-                          <span className="strong block text-content-2">{p.name}</span>
-                          <span className="font-mono text-3xs text-content-faint">{p.id}</span>
-                        </td>
-                        <td className="text-content-muted">{p.countryName}</td>
-                        <td>
-                          <div className="flex flex-wrap gap-1">
-                            {p.corridors.length ? p.corridors.map((c) => (
-                              <span key={c} className="rounded bg-surface-3 px-1 py-[1px] font-mono text-3xs text-content-muted">{c}</span>
-                            )) : <span className="text-3xs text-content-dim">—</span>}
-                          </div>
-                        </td>
-                        <td className="text-2xs text-content-muted">{p.rails.join("·")}</td>
-                        <td><StatusPill status={p.kybStatus} /></td>
-                        <td>
-                          {p.status === "Onboarding" ? <span className="text-3xs text-content-dim">—</span> : (
-                            <div className="flex items-center gap-1.5">
-                              <Meter value={p.successRate} tone={successTone(p.successRate)} className="w-10" />
-                              <span className="tabular text-2xs text-content-muted">{formatPct(p.successRate)}</span>
-                            </div>
-                          )}
-                        </td>
-                        <td className="num text-right text-content-muted">{p.status === "Onboarding" ? "—" : `${p.avgPayoutMins}m`}</td>
-                        <td className="num text-right">{formatPct(p.commissionPct, 2)}</td>
-                        <td><StatusPill status={p.status} /></td>
-                        <td className="text-content-dim"><ChevronRight size={13} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <DataTable columns={partnerColumns} rows={pgP.paginated} rowKey={(p) => p.id} onRowClick={setSelected} />
               </div>
               <Pagination page={pgP.page} totalPages={pgP.totalPages} perPage={pgP.perPage} totalItems={pgP.totalItems} onPageChange={pgP.setPage} onPerPageChange={pgP.setPerPage} />
             </>
@@ -214,44 +242,7 @@ export default function PartnersPage() {
             <>
               <TotalCount count={floats.length} noun="float accounts" />
               <div className="w-full overflow-x-auto">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Account</th>
-                      <th>Partner</th>
-                      <th>Corridor</th>
-                      <th className="text-right">Balance</th>
-                      <th className="text-right">Target</th>
-                      <th>Utilisation</th>
-                      <th>Status</th>
-                      <th className="text-right">Last top-up</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pgF.paginated.map((f) => {
-                      const partner = partners.find((p) => p.id === f.partnerId);
-                      return (
-                        <tr key={f.id}>
-                          <td className="font-mono text-2xs text-content-2">{f.id}</td>
-                          <td className="text-content-muted">{partner?.name ?? f.partnerId}</td>
-                          <td className="font-mono text-2xs">{f.corridorCode}</td>
-                          <td className="num text-right">{formatMoney(f.balance, f.currency, 0)}</td>
-                          <td className="num text-right text-content-muted">{formatMoney(f.targetBalance, f.currency, 0)}</td>
-                          <td>
-                            <div className="flex items-center gap-1.5">
-                              <Meter value={f.utilisation} tone={floatTone(f.status)} className="w-14" />
-                              <span className="tabular text-2xs text-content-muted">{f.utilisation}%</span>
-                            </div>
-                          </td>
-                          <td><StatusPill status={f.status} /></td>
-                          <td className="text-right text-2xs text-content-faint">{formatDate(f.lastToppedUp)}</td>
-                          <td>{canEdit("treasury") && f.status !== "Healthy" && <Button size="xs" variant="subtle">Top up</Button>}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <DataTable columns={floatColumns} rows={pgF.paginated} rowKey={(f) => f.id} />
               </div>
               <Pagination page={pgF.page} totalPages={pgF.totalPages} perPage={pgF.perPage} totalItems={pgF.totalItems} onPageChange={pgF.setPage} onPerPageChange={pgF.setPerPage} />
             </>

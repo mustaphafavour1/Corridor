@@ -25,6 +25,8 @@ import {
   DetailRow,
   DescriptionList,
   Button,
+  DataTable,
+  type DataTableColumn,
 } from "@/components/ui";
 
 const USD: Record<Currency, number> = {
@@ -78,6 +80,39 @@ export default function TransfersPage() {
   const flaggedCount = all.filter((t) => t.riskFlagged).length;
 
   const stageCounts = LIFECYCLE.map((s) => ({ stage: s, count: all.filter((t) => t.status === s).length }));
+
+  const transferColumns: DataTableColumn<Transfer>[] = [
+    {
+      key: "ref",
+      label: "Reference",
+      cellClassName: "font-mono text-2xs text-content-2",
+      render: (t) => (
+        <span className="flex items-center gap-1.5">
+          {t.riskFlagged && <Flag size={10} className="text-warning" />}
+          {t.id}
+        </span>
+      ),
+    },
+    {
+      key: "sender",
+      label: "Sender → Beneficiary",
+      render: (t) => (
+        <>
+          <span className="strong block text-content-2">{t.senderName}</span>
+          <span className="text-3xs text-content-faint">→ {t.beneficiaryName}</span>
+        </>
+      ),
+    },
+    { key: "corridor", label: "Corridor", cellClassName: "font-mono text-2xs", render: (t) => t.corridorCode },
+    { key: "svc", label: "Svc", cellClassName: "text-2xs text-content-muted", render: (t) => t.serviceCode },
+    { key: "send", label: "Send", align: "right", cellClassName: "num", render: (t) => formatMoney(t.sendAmount, t.sendCurrency) },
+    { key: "receive", label: "Receive", align: "right", cellClassName: "num text-content-muted", render: (t) => formatMoney(t.receiveAmount, t.receiveCurrency, 0) },
+    { key: "fee", label: "Fee", align: "right", cellClassName: "num text-content-faint", render: (t) => formatMoney(t.feeAmount, t.sendCurrency) },
+    { key: "rail", label: "Rail", cellClassName: "text-2xs text-content-muted", render: (t) => t.rail },
+    { key: "status", label: "Status", render: (t) => <StatusPill status={t.status} /> },
+    { key: "created", label: "Created", align: "right", cellClassName: "text-2xs text-content-faint", render: (t) => formatDate(t.createdAt) },
+    { key: "chevron", label: "", cellClassName: "text-content-dim", render: () => <ChevronRight size={13} /> },
+  ];
 
   return (
     <div className="space-y-4">
@@ -141,48 +176,7 @@ export default function TransfersPage() {
         ) : (
           <>
             <div className="w-full overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Reference</th>
-                    <th>Sender → Beneficiary</th>
-                    <th>Corridor</th>
-                    <th>Svc</th>
-                    <th className="text-right">Send</th>
-                    <th className="text-right">Receive</th>
-                    <th className="text-right">Fee</th>
-                    <th>Rail</th>
-                    <th>Status</th>
-                    <th className="text-right">Created</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pg.paginated.map((t) => (
-                    <tr key={t.id} className="cursor-pointer" onClick={() => setSelected(t)}>
-                      <td className="font-mono text-2xs text-content-2">
-                        <span className="flex items-center gap-1.5">
-                          {t.riskFlagged && <Flag size={10} className="text-warning" />}
-                          {t.id}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="strong block text-content-2">{t.senderName}</span>
-                        <span className="text-3xs text-content-faint">→ {t.beneficiaryName}</span>
-                      </td>
-                      <td className="font-mono text-2xs">{t.corridorCode}</td>
-                      <td className="text-2xs text-content-muted">{t.serviceCode}</td>
-                      <td className="num text-right">{formatMoney(t.sendAmount, t.sendCurrency)}</td>
-                      <td className="num text-right text-content-muted">{formatMoney(t.receiveAmount, t.receiveCurrency, 0)}</td>
-                      <td className="num text-right text-content-faint">{formatMoney(t.feeAmount, t.sendCurrency)}</td>
-                      <td className="text-2xs text-content-muted">{t.rail}</td>
-                      <td><StatusPill status={t.status} /></td>
-                      <td className="text-right text-2xs text-content-faint">{formatDate(t.createdAt)}</td>
-                      <td className="text-content-dim"><ChevronRight size={13} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <DataTable columns={transferColumns} rows={pg.paginated} rowKey={(t) => t.id} onRowClick={setSelected} />
             </div>
             <Pagination
               page={pg.page}

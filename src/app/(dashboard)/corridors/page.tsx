@@ -24,6 +24,8 @@ import {
   Sheet,
   DetailRow,
   DescriptionList,
+  DataTable,
+  type DataTableColumn,
 } from "@/components/ui";
 
 function successTone(rate: number) {
@@ -67,6 +69,119 @@ export default function CorridorsPage() {
   const avgSpread = corridors.length ? Math.round(corridors.reduce((s, c) => s + c.fxSpreadBps, 0) / corridors.length) : 0;
   const avgSuccess = corridors.length ? corridors.reduce((s, c) => s + c.successRate, 0) / corridors.length : 0;
   const lockedCount = fxRates.filter((f) => f.locked).length;
+
+  const matrixColumns: DataTableColumn<Corridor>[] = [
+    {
+      key: "corridor",
+      label: "Corridor",
+      render: (c) => (
+        <>
+          <div className="flex items-center gap-1.5 font-medium text-content-2">
+            <span className="font-mono text-2xs">{c.sendCountry}</span>
+            <ArrowRight size={11} className="text-content-faint" />
+            <span className="font-mono text-2xs">{c.receiveCountry}</span>
+            <span className="ml-1 text-3xs text-content-faint">{c.code}</span>
+          </div>
+          <span className="text-3xs text-content-faint">{c.sendCountryName} → {c.receiveCountryName}</span>
+        </>
+      ),
+    },
+    { key: "currencies", label: "Currencies", cellClassName: "font-mono text-2xs text-content-muted", render: (c) => `${c.sendCurrency}/${c.receiveCurrency}` },
+    {
+      key: "rails",
+      label: "Rails",
+      render: (c) => (
+        <div className="flex gap-1">
+          {c.rails.map((r) => (
+            <span key={r} className="rounded bg-surface-3 px-1 py-[1px] text-3xs text-content-muted">{r}</span>
+          ))}
+        </div>
+      ),
+    },
+    { key: "fee", label: "Fee", align: "right", cellClassName: "num", render: (c) => formatPct(c.feePct, 2) },
+    { key: "spread", label: "Spread", align: "right", cellClassName: "num text-content-muted", render: (c) => `${c.fxSpreadBps}bps` },
+    { key: "limits", label: "Limits", align: "right", cellClassName: "num text-content-muted text-2xs", render: (c) => `${formatCompact(c.minAmount, c.sendCurrency)}–${formatCompact(c.maxAmount, c.sendCurrency)}` },
+    { key: "sla", label: "SLA", align: "right", cellClassName: "num text-content-muted", render: (c) => `${c.settlementSlaHrs}h` },
+    { key: "partners", label: "Partners", align: "right", cellClassName: "num", render: (c) => c.partnerIds.length },
+    { key: "volume", label: "Volume", align: "right", cellClassName: "num", render: (c) => formatCompact(c.monthlyVolume) },
+    {
+      key: "success",
+      label: "Success",
+      render: (c) => (
+        <div className="flex items-center gap-1.5">
+          <Meter value={c.successRate} tone={successTone(c.successRate)} className="w-10" />
+          <span className="tabular text-2xs text-content-muted">{formatPct(c.successRate)}</span>
+        </div>
+      ),
+    },
+    { key: "status", label: "Status", render: (c) => <StatusPill status={c.status} /> },
+    { key: "chevron", label: "", cellClassName: "text-content-dim", render: () => <ChevronRight size={13} /> },
+  ];
+
+  const fxColumns: DataTableColumn<FxRate>[] = [
+    { key: "pair", label: "Pair", cellClassName: "font-mono font-medium text-content-2", render: (f) => f.pair },
+    { key: "mid", label: "Mid", align: "right", cellClassName: "num", render: (f) => f.midRate.toLocaleString() },
+    { key: "live", label: "Live", align: "right", cellClassName: "num text-content-muted", render: (f) => f.liveRate.toLocaleString() },
+    { key: "locked", label: "Locked", align: "right", cellClassName: "num text-content-muted", render: (f) => f.lockedRate.toLocaleString() },
+    { key: "spread", label: "Spread", align: "right", cellClassName: "num text-content-faint", render: (f) => `${f.spreadBps}bps` },
+    {
+      key: "change",
+      label: "24h",
+      align: "right",
+      cellClassName: (f) => cn("num", f.change24h >= 0 ? "text-success" : "text-danger"),
+      render: (f) => `${f.change24h >= 0 ? "+" : ""}${f.change24h.toFixed(2)}%`,
+    },
+    { key: "updated", label: "Updated", align: "right", cellClassName: "text-3xs text-content-faint", render: (f) => formatDateTime(f.updatedAt) },
+    {
+      key: "lock",
+      label: "Rate lock",
+      render: (f) => (
+        <div className="flex items-center gap-2">
+          <Switch checked={f.locked} onCheckedChange={() => toggleFxLock(f.id)} />
+          <span className="inline-flex items-center gap-1 text-2xs text-content-muted">
+            {f.locked ? <Lock size={10} className="text-accent" /> : <Unlock size={10} className="text-content-faint" />}
+            {f.locked ? "Locked" : "Live"}
+          </span>
+        </div>
+      ),
+    },
+  ];
+
+  const exposureColumns: DataTableColumn<(typeof exposures)[number]>[] = [
+    { key: "currency", label: "Currency", cellClassName: "font-mono font-medium text-content-2", render: (e) => e.currency },
+    {
+      key: "net",
+      label: "Net position",
+      align: "right",
+      cellClassName: (e) => cn("num", e.netPosition < 0 ? "text-danger" : "text-success"),
+      render: (e) => e.netPosition.toLocaleString(),
+    },
+    { key: "usd", label: "USD equivalent", align: "right", cellClassName: "num", render: (e) => formatMoney(e.usdEquivalent, "USD", 0) },
+    {
+      key: "hedged",
+      label: "Hedged",
+      render: (e) => (
+        <div className="flex items-center gap-1.5">
+          <Meter value={e.hedgedPct} tone={e.hedgedPct >= 80 ? "success" : "warning"} className="w-12" />
+          <span className="tabular text-2xs text-content-muted">{e.hedgedPct}%</span>
+        </div>
+      ),
+    },
+    { key: "limit", label: "Limit (USD)", align: "right", cellClassName: "num text-content-muted", render: (e) => formatCompact(e.limit) },
+    {
+      key: "utilisation",
+      label: "Utilisation",
+      render: (e) => {
+        const util = Math.min(100, Math.round((Math.abs(e.usdEquivalent) / e.limit) * 100));
+        return (
+          <div className="flex items-center gap-1.5">
+            <Meter value={util} tone={util >= 80 ? "danger" : util >= 60 ? "warning" : "brand"} className="w-12" />
+            <span className="tabular text-2xs text-content-muted">{util}%</span>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -115,61 +230,7 @@ export default function CorridorsPage() {
             <EmptyState title={isEmpty ? "No corridors" : "No matches"} message={isEmpty ? "Flip the seed toggle to populate the matrix." : "Adjust your search or filters."} />
           ) : (
             <div className="w-full overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Corridor</th>
-                    <th>Currencies</th>
-                    <th>Rails</th>
-                    <th className="text-right">Fee</th>
-                    <th className="text-right">Spread</th>
-                    <th className="text-right">Limits</th>
-                    <th className="text-right">SLA</th>
-                    <th className="text-right">Partners</th>
-                    <th className="text-right">Volume</th>
-                    <th>Success</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCorridors.map((c) => (
-                    <tr key={c.code} className="cursor-pointer" onClick={() => setSelected(c)}>
-                      <td>
-                        <div className="flex items-center gap-1.5 font-medium text-content-2">
-                          <span className="font-mono text-2xs">{c.sendCountry}</span>
-                          <ArrowRight size={11} className="text-content-faint" />
-                          <span className="font-mono text-2xs">{c.receiveCountry}</span>
-                          <span className="ml-1 text-3xs text-content-faint">{c.code}</span>
-                        </div>
-                        <span className="text-3xs text-content-faint">{c.sendCountryName} → {c.receiveCountryName}</span>
-                      </td>
-                      <td className="font-mono text-2xs text-content-muted">{c.sendCurrency}/{c.receiveCurrency}</td>
-                      <td>
-                        <div className="flex gap-1">
-                          {c.rails.map((r) => (
-                            <span key={r} className="rounded bg-surface-3 px-1 py-[1px] text-3xs text-content-muted">{r}</span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="num text-right">{formatPct(c.feePct, 2)}</td>
-                      <td className="num text-right text-content-muted">{c.fxSpreadBps}bps</td>
-                      <td className="num text-right text-content-muted text-2xs">{formatCompact(c.minAmount, c.sendCurrency)}–{formatCompact(c.maxAmount, c.sendCurrency)}</td>
-                      <td className="num text-right text-content-muted">{c.settlementSlaHrs}h</td>
-                      <td className="num text-right">{c.partnerIds.length}</td>
-                      <td className="num text-right">{formatCompact(c.monthlyVolume)}</td>
-                      <td>
-                        <div className="flex items-center gap-1.5">
-                          <Meter value={c.successRate} tone={successTone(c.successRate)} className="w-10" />
-                          <span className="tabular text-2xs text-content-muted">{formatPct(c.successRate)}</span>
-                        </div>
-                      </td>
-                      <td><StatusPill status={c.status} /></td>
-                      <td className="text-content-dim"><ChevronRight size={13} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <DataTable columns={matrixColumns} rows={filteredCorridors} rowKey={(c) => c.code} onRowClick={setSelected} />
             </div>
           ))}
 
@@ -179,25 +240,7 @@ export default function CorridorsPage() {
             <EmptyState title="No FX rates" message="Flip the seed toggle to see live vs locked pricing." />
           ) : (
             <div className="w-full overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Pair</th>
-                    <th className="text-right">Mid</th>
-                    <th className="text-right">Live</th>
-                    <th className="text-right">Locked</th>
-                    <th className="text-right">Spread</th>
-                    <th className="text-right">24h</th>
-                    <th className="text-right">Updated</th>
-                    <th>Rate lock</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {fxRates.map((f) => (
-                    <FxRow key={f.id} fx={f} canEdit={canEdit("corridors")} onToggle={() => toggleFxLock(f.id)} />
-                  ))}
-                </tbody>
-              </table>
+              <DataTable columns={fxColumns} rows={fxRates} rowKey={(f) => f.id} />
             </div>
           ))}
 
@@ -207,45 +250,7 @@ export default function CorridorsPage() {
             <EmptyState title="No exposure data" message="Flip the seed toggle to view currency exposure." />
           ) : (
             <div className="w-full overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Currency</th>
-                    <th className="text-right">Net position</th>
-                    <th className="text-right">USD equivalent</th>
-                    <th>Hedged</th>
-                    <th className="text-right">Limit (USD)</th>
-                    <th>Utilisation</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {exposures.map((e) => {
-                    const util = Math.min(100, Math.round((Math.abs(e.usdEquivalent) / e.limit) * 100));
-                    return (
-                      <tr key={e.currency}>
-                        <td className="font-mono font-medium text-content-2">{e.currency}</td>
-                        <td className={cn("num text-right", e.netPosition < 0 ? "text-danger" : "text-success")}>
-                          {e.netPosition.toLocaleString()}
-                        </td>
-                        <td className="num text-right">{formatMoney(e.usdEquivalent, "USD", 0)}</td>
-                        <td>
-                          <div className="flex items-center gap-1.5">
-                            <Meter value={e.hedgedPct} tone={e.hedgedPct >= 80 ? "success" : "warning"} className="w-12" />
-                            <span className="tabular text-2xs text-content-muted">{e.hedgedPct}%</span>
-                          </div>
-                        </td>
-                        <td className="num text-right text-content-muted">{formatCompact(e.limit)}</td>
-                        <td>
-                          <div className="flex items-center gap-1.5">
-                            <Meter value={util} tone={util >= 80 ? "danger" : util >= 60 ? "warning" : "brand"} className="w-12" />
-                            <span className="tabular text-2xs text-content-muted">{util}%</span>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <DataTable columns={exposureColumns} rows={exposures} rowKey={(e) => e.currency} />
             </div>
           ))}
       </SectionCard>
@@ -257,31 +262,6 @@ export default function CorridorsPage() {
         feeSchedules={data.feeSchedules}
       />
     </div>
-  );
-}
-
-function FxRow({ fx, canEdit, onToggle }: { fx: FxRate; canEdit: boolean; onToggle: () => void }) {
-  return (
-    <tr>
-      <td className="font-mono font-medium text-content-2">{fx.pair}</td>
-      <td className="num text-right">{fx.midRate.toLocaleString()}</td>
-      <td className="num text-right text-content-muted">{fx.liveRate.toLocaleString()}</td>
-      <td className="num text-right text-content-muted">{fx.lockedRate.toLocaleString()}</td>
-      <td className="num text-right text-content-faint">{fx.spreadBps}bps</td>
-      <td className={cn("num text-right", fx.change24h >= 0 ? "text-success" : "text-danger")}>
-        {fx.change24h >= 0 ? "+" : ""}{fx.change24h.toFixed(2)}%
-      </td>
-      <td className="text-right text-3xs text-content-faint">{formatDateTime(fx.updatedAt)}</td>
-      <td>
-        <div className="flex items-center gap-2">
-          <Switch checked={fx.locked} onCheckedChange={onToggle} />
-          <span className="inline-flex items-center gap-1 text-2xs text-content-muted">
-            {fx.locked ? <Lock size={10} className="text-accent" /> : <Unlock size={10} className="text-content-faint" />}
-            {fx.locked ? "Locked" : "Live"}
-          </span>
-        </div>
-      </td>
-    </tr>
   );
 }
 

@@ -27,6 +27,8 @@ import {
   Modal,
   DetailRow,
   DescriptionList,
+  DataTable,
+  type DataTableColumn,
 } from "@/components/ui";
 import { initials } from "@/lib/utils";
 
@@ -86,6 +88,79 @@ export default function SendersPage() {
 
   const partnerScoped = !!scope.partnerId;
 
+  const senderColumns: DataTableColumn<Sender>[] = [
+    {
+      key: "sender",
+      label: "Sender",
+      render: (s) => (
+        <div className="flex items-center gap-2">
+          <Avatar initials={initials(s.firstName, s.lastName)} color="var(--surface-4)" size={22} />
+          <div>
+            <span className="strong block text-content-2">{s.firstName.trim()} {s.lastName}</span>
+            <span className="font-mono text-3xs text-content-faint">{s.id}</span>
+          </div>
+        </div>
+      ),
+    },
+    { key: "country", label: "Country", cellClassName: "text-content-muted", render: (s) => s.countryName },
+    { key: "tier", label: "KYC tier", render: (s) => <Badge tone="info">{s.kycTier}</Badge> },
+    { key: "kyc", label: "KYC status", render: (s) => <StatusPill status={s.kycStatus} /> },
+    { key: "limit", label: "Monthly limit", align: "right", cellClassName: "num", render: (s) => formatMoney(s.monthlyLimit, s.currency, 0) },
+    {
+      key: "risk",
+      label: "Risk",
+      render: (s) => (
+        <div className="flex items-center gap-1.5">
+          <Meter value={s.riskScore} tone={riskTone(s.riskScore)} className="w-10" />
+          <span className="tabular text-2xs text-content-muted">{s.riskScore}</span>
+        </div>
+      ),
+    },
+    { key: "payees", label: "Payees", align: "right", cellClassName: "num", render: (s) => s.beneficiaryIds.length },
+    { key: "sent", label: "Total sent", align: "right", cellClassName: "num", render: (s) => formatMoney(s.totalSent, s.currency, 0) },
+    { key: "status", label: "Status", render: (s) => <StatusPill status={s.status} /> },
+    { key: "chevron", label: "", cellClassName: "text-content-dim", render: () => <ChevronRight size={13} /> },
+  ];
+
+  const beneficiaryColumns: DataTableColumn<Beneficiary>[] = [
+    {
+      key: "beneficiary",
+      label: "Beneficiary",
+      render: (b) => (
+        <>
+          <span className="strong block text-content-2">{b.name}</span>
+          <span className="font-mono text-3xs text-content-faint">{b.id} · {b.countryName}</span>
+        </>
+      ),
+    },
+    {
+      key: "sender",
+      label: "Sender",
+      cellClassName: "text-content-muted",
+      render: (b) => {
+        const sender = senders.find((s) => s.id === b.senderId);
+        return sender ? `${sender.firstName.trim()} ${sender.lastName}` : b.senderId;
+      },
+    },
+    { key: "corridor", label: "Corridor", cellClassName: "font-mono text-2xs", render: (b) => b.corridorCode },
+    {
+      key: "method",
+      label: "Method",
+      render: (b) => {
+        const Icon = METHOD_ICON[b.method];
+        return (
+          <span className="inline-flex items-center gap-1.5 text-2xs text-content-muted">
+            <Icon size={12} className="text-content-faint" /> {METHOD_LABEL[b.method]}
+          </span>
+        );
+      },
+    },
+    { key: "destination", label: "Destination", cellClassName: "font-mono text-2xs text-content-muted", render: (b) => beneficiaryDetail(b) },
+    { key: "relationship", label: "Relationship", cellClassName: "text-content-muted", render: (b) => b.relationship },
+    { key: "verification", label: "Verification", render: (b) => <StatusPill status={b.verification} /> },
+    { key: "lastPaid", label: "Last paid", align: "right", cellClassName: "text-2xs text-content-faint", render: (b) => (b.lastPaidOn ? formatDate(b.lastPaidOn) : "—") },
+  ];
+
   return (
     <div className="space-y-4">
       <PageHeader title="Senders & Beneficiaries" subtitle="KYC-tiered senders and their per-corridor payout beneficiaries">
@@ -132,96 +207,14 @@ export default function SendersPage() {
         ) : tab === "senders" ? (
           <>
             <div className="w-full overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Sender</th>
-                    <th>Country</th>
-                    <th>KYC tier</th>
-                    <th>KYC status</th>
-                    <th className="text-right">Monthly limit</th>
-                    <th>Risk</th>
-                    <th className="text-right">Payees</th>
-                    <th className="text-right">Total sent</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(pg.paginated as Sender[]).map((s) => (
-                    <tr key={s.id} className="cursor-pointer" onClick={() => setSelected(s)}>
-                      <td>
-                        <div className="flex items-center gap-2">
-                          <Avatar initials={initials(s.firstName, s.lastName)} color="var(--surface-4)" size={22} />
-                          <div>
-                            <span className="strong block text-content-2">{s.firstName.trim()} {s.lastName}</span>
-                            <span className="font-mono text-3xs text-content-faint">{s.id}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="text-content-muted">{s.countryName}</td>
-                      <td><Badge tone="info">{s.kycTier}</Badge></td>
-                      <td><StatusPill status={s.kycStatus} /></td>
-                      <td className="num text-right">{formatMoney(s.monthlyLimit, s.currency, 0)}</td>
-                      <td>
-                        <div className="flex items-center gap-1.5">
-                          <Meter value={s.riskScore} tone={riskTone(s.riskScore)} className="w-10" />
-                          <span className="tabular text-2xs text-content-muted">{s.riskScore}</span>
-                        </div>
-                      </td>
-                      <td className="num text-right">{s.beneficiaryIds.length}</td>
-                      <td className="num text-right">{formatMoney(s.totalSent, s.currency, 0)}</td>
-                      <td><StatusPill status={s.status} /></td>
-                      <td className="text-content-dim"><ChevronRight size={13} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <DataTable columns={senderColumns} rows={pg.paginated as Sender[]} rowKey={(s) => s.id} onRowClick={setSelected} />
             </div>
             <Pagination page={pg.page} totalPages={pg.totalPages} perPage={pg.perPage} totalItems={pg.totalItems} onPageChange={pg.setPage} onPerPageChange={pg.setPerPage} />
           </>
         ) : (
           <>
             <div className="w-full overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Beneficiary</th>
-                    <th>Sender</th>
-                    <th>Corridor</th>
-                    <th>Method</th>
-                    <th>Destination</th>
-                    <th>Relationship</th>
-                    <th>Verification</th>
-                    <th className="text-right">Last paid</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(pg.paginated as Beneficiary[]).map((b) => {
-                    const Icon = METHOD_ICON[b.method];
-                    const sender = senders.find((s) => s.id === b.senderId);
-                    return (
-                      <tr key={b.id}>
-                        <td>
-                          <span className="strong block text-content-2">{b.name}</span>
-                          <span className="font-mono text-3xs text-content-faint">{b.id} · {b.countryName}</span>
-                        </td>
-                        <td className="text-content-muted">{sender ? `${sender.firstName.trim()} ${sender.lastName}` : b.senderId}</td>
-                        <td className="font-mono text-2xs">{b.corridorCode}</td>
-                        <td>
-                          <span className="inline-flex items-center gap-1.5 text-2xs text-content-muted">
-                            <Icon size={12} className="text-content-faint" /> {METHOD_LABEL[b.method]}
-                          </span>
-                        </td>
-                        <td className="font-mono text-2xs text-content-muted">{beneficiaryDetail(b)}</td>
-                        <td className="text-content-muted">{b.relationship}</td>
-                        <td><StatusPill status={b.verification} /></td>
-                        <td className="text-right text-2xs text-content-faint">{b.lastPaidOn ? formatDate(b.lastPaidOn) : "—"}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <DataTable columns={beneficiaryColumns} rows={pg.paginated as Beneficiary[]} rowKey={(b) => b.id} />
             </div>
             <Pagination page={pg.page} totalPages={pg.totalPages} perPage={pg.perPage} totalItems={pg.totalItems} onPageChange={pg.setPage} onPerPageChange={pg.setPerPage} />
           </>
@@ -313,6 +306,19 @@ const SAMPLE_CSV = [
   { name: "—", country: "Mexico", corridor: "US-MX", method: "Cash", valid: false },
 ];
 
+const CSV_COLUMNS: DataTableColumn<(typeof SAMPLE_CSV)[number]>[] = [
+  { key: "sn", label: "#", cellClassName: "text-content-faint", render: (_r, i) => i + 1 },
+  { key: "name", label: "Name", cellClassName: "strong", render: (r) => r.name },
+  { key: "country", label: "Country", cellClassName: "text-content-muted", render: (r) => r.country },
+  { key: "corridor", label: "Corridor", cellClassName: "font-mono text-2xs", render: (r) => r.corridor },
+  { key: "method", label: "Method", cellClassName: "text-content-muted", render: (r) => r.method },
+  {
+    key: "validation",
+    label: "Validation",
+    render: (r) => (r.valid ? <Badge tone="success" dot>Valid</Badge> : <Badge tone="danger" dot>Missing name</Badge>),
+  },
+];
+
 function ImportCsvModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const validCount = SAMPLE_CSV.filter((r) => r.valid).length;
   return (
@@ -330,30 +336,7 @@ function ImportCsvModal({ open, onClose }: { open: boolean; onClose: () => void 
       }
     >
       <div className="w-full overflow-x-auto">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Country</th>
-              <th>Corridor</th>
-              <th>Method</th>
-              <th>Validation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {SAMPLE_CSV.map((r, i) => (
-              <tr key={i}>
-                <td className="text-content-faint">{i + 1}</td>
-                <td className="strong">{r.name}</td>
-                <td className="text-content-muted">{r.country}</td>
-                <td className="font-mono text-2xs">{r.corridor}</td>
-                <td className="text-content-muted">{r.method}</td>
-                <td>{r.valid ? <Badge tone="success" dot>Valid</Badge> : <Badge tone="danger" dot>Missing name</Badge>}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable columns={CSV_COLUMNS} rows={SAMPLE_CSV} rowKey={(_r, i) => i} />
       </div>
       <p className="mt-3 text-2xs text-content-faint">
         {validCount} of {SAMPLE_CSV.length} rows valid · 1 row will be skipped.

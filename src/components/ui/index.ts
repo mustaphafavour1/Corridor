@@ -1,6 +1,7 @@
 export * from "./primitives";
 export * from "./badge";
 export * from "./table";
+export * from "./data-table";
 export * from "./inputs";
 export * from "./feedback";
 export * from "./overlay";

@@ -28,6 +28,8 @@ import {
   Donut,
   RankBars,
   CHART,
+  DataTable,
+  type DataTableColumn,
 } from "@/components/ui";
 
 const USD: Record<Currency, number> = {
@@ -69,6 +71,17 @@ export default function OverviewPage() {
     .sort((a, b) => b.monthlyVolume - a.monthlyVolume)
     .slice(0, 6)
     .map((c) => ({ label: c.code, value: c.monthlyVolume, color: CHART.rose }));
+
+  const transferColumns: DataTableColumn<Transfer>[] = [
+    { key: "ref", label: "Reference", cellClassName: "font-mono text-2xs text-content-2", render: (t) => t.id },
+    { key: "sender", label: "Sender", cellClassName: "strong", render: (t) => t.senderName },
+    { key: "corridor", label: "Corridor", cellClassName: "font-mono text-2xs", render: (t) => t.corridorCode },
+    { key: "send", label: "Send", align: "right", cellClassName: "num", render: (t) => formatMoney(t.sendAmount, t.sendCurrency) },
+    { key: "receive", label: "Receive", align: "right", cellClassName: "num text-content-muted", render: (t) => formatMoney(t.receiveAmount, t.receiveCurrency, 0) },
+    { key: "rail", label: "Rail", cellClassName: "text-2xs text-content-muted", render: (t) => t.rail },
+    { key: "status", label: "Status", render: (t) => <StatusPill status={t.status} /> },
+    { key: "created", label: "Created", align: "right", cellClassName: "text-2xs text-content-faint", render: (t) => formatDate(t.createdAt) },
+  ];
 
   return (
     <div className="space-y-4">
@@ -224,34 +237,7 @@ export default function OverviewPage() {
           <EmptyState title="No transfers yet" message="Flip the seed toggle to populate demo activity." />
         ) : (
           <div className="w-full overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Reference</th>
-                  <th>Sender</th>
-                  <th>Corridor</th>
-                  <th className="text-right">Send</th>
-                  <th className="text-right">Receive</th>
-                  <th>Rail</th>
-                  <th>Status</th>
-                  <th className="text-right">Created</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transfers.slice(0, 7).map((t) => (
-                  <tr key={t.id}>
-                    <td className="font-mono text-2xs text-content-2">{t.id}</td>
-                    <td className="strong">{t.senderName}</td>
-                    <td className="font-mono text-2xs">{t.corridorCode}</td>
-                    <td className="num text-right">{formatMoney(t.sendAmount, t.sendCurrency)}</td>
-                    <td className="num text-right text-content-muted">{formatMoney(t.receiveAmount, t.receiveCurrency, 0)}</td>
-                    <td><span className="text-2xs text-content-muted">{t.rail}</span></td>
-                    <td><StatusPill status={t.status} /></td>
-                    <td className="text-right text-2xs text-content-faint">{formatDate(t.createdAt)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable columns={transferColumns} rows={transfers.slice(0, 7)} rowKey={(t) => t.id} />
           </div>
         )}
       </SectionCard>

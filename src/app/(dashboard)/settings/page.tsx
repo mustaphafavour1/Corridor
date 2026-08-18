@@ -16,6 +16,8 @@ import {
   DetailRow,
   DescriptionList,
   Segmented,
+  DataTable,
+  type DataTableColumn,
 } from "@/components/ui";
 import { RoleSwitcher } from "@/components/layout/role-switcher";
 
@@ -30,6 +32,22 @@ export default function SettingsPage() {
 
   const rootRole = data.roles.find((r) => r.id === rootUser.roleId);
   const canSwitch = rootRole?.base === "super_admin";
+
+  const permissionColumns: DataTableColumn<(typeof MODULES)[number]>[] = [
+    { key: "module", label: "Module", cellClassName: "strong", render: (m) => m.label },
+    {
+      key: "access",
+      label: "Access",
+      render: (m) => {
+        const level = activeRole.permissions[m.key];
+        return (
+          <Badge tone={level === "edit" ? "success" : level === "view" ? "info" : "neutral"}>
+            {PERM_LABEL[level]}
+          </Badge>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -121,29 +139,7 @@ export default function SettingsPage() {
             action={<ShieldCheck size={13} className="text-content-faint" />}
           />
           <div className="w-full overflow-x-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Module</th>
-                  <th>Access</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MODULES.map((m) => {
-                  const level = activeRole.permissions[m.key];
-                  return (
-                    <tr key={m.key}>
-                      <td className="strong">{m.label}</td>
-                      <td>
-                        <Badge tone={level === "edit" ? "success" : level === "view" ? "info" : "neutral"}>
-                          {PERM_LABEL[level]}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <DataTable columns={permissionColumns} rows={MODULES} rowKey={(m) => m.key} />
           </div>
         </SectionCard>
 
