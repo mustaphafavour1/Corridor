@@ -86,7 +86,7 @@ export default function OverviewPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        hero
+        className="mt-6"
         title="Overview"
         subtitle={`Live money-movement across ${corridors.length} corridor${corridors.length === 1 ? "" : "s"} in scope`}
       >

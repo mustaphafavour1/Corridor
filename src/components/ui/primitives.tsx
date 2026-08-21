@@ -215,24 +215,24 @@ export function Meter({
 /* ─────────────────────────── PageHeader ───────────────────────────
  * Understated: 18px title, optional 12px muted subtitle, actions right-
  * aligned. No gradient/icon-box header. Also carries the page's top offset —
- * ~50px on every screen except the main dashboard, which keeps ~100px for
- * its greeting/hero moment (pass `hero`). */
+ * ~50px on every screen by default; pass `className` to override (e.g. the
+ * main dashboard uses a plain ~24px gap, same as any ordinary content block). */
 export function PageHeader({
   title,
   subtitle,
-  hero = false,
+  className,
   children,
 }: {
   title: string;
   subtitle?: string;
-  hero?: boolean;
+  className?: string;
   children?: React.ReactNode;
 }) {
   return (
     <div
       className={cn(
-        "flex flex-wrap items-end justify-between gap-3",
-        hero ? "mt-[100px]" : "mt-[50px]",
+        "flex flex-wrap items-end justify-between gap-3 mt-[50px]",
+        className,
       )}
     >
       <div>
