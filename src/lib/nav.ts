@@ -54,8 +54,8 @@ export const NAV: NavGroup[] = [
     label: "Network & Treasury",
     items: [
       { label: "Payout Partners", href: "/partners", icon: Building2, module: "partners", built: true },
-      { label: "Treasury & Liquidity", href: "/treasury", icon: Wallet, module: "treasury", built: false },
-      { label: "Reconciliation", href: "/reconciliation", icon: GitCompareArrows, module: "reconciliation", built: false },
+      { label: "Treasury & Liquidity", href: "/treasury", icon: Wallet, module: "treasury", built: true },
+      { label: "Reconciliation", href: "/reconciliation", icon: GitCompareArrows, module: "reconciliation", built: true },
     ],
   },
   {

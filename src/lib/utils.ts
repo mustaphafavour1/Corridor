@@ -33,7 +33,7 @@ export function formatCompact(amount: number, currency = "USD") {
   if (abs >= 1_000_000_000) return `${sym}${(amount / 1_000_000_000).toFixed(1)}B`;
   if (abs >= 1_000_000) return `${sym}${(amount / 1_000_000).toFixed(1)}M`;
   if (abs >= 1_000) return `${sym}${(amount / 1_000).toFixed(1)}k`;
-  return `${sym}${amount.toLocaleString("en-US")}`;
+  return `${sym}${Math.round(amount).toLocaleString("en-US")}`;
 }
 
 /** Compact plain number: 32.5k / 1.5M. */
