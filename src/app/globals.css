@@ -163,7 +163,10 @@ body {
     @apply w-full border-collapse;
   }
   .data-table thead th {
-    @apply text-xs font-medium uppercase text-content-faint text-left py-2 pr-3 whitespace-nowrap;
+    /* Alignment is set per-column via inline style on the <th> itself
+       (see DataTable) — never here, so it can't fight a higher-specificity
+       compound selector like this one. */
+    @apply text-xs font-medium uppercase text-content-faint py-2 pr-3 whitespace-nowrap;
     letter-spacing: 0.06em;
     border-bottom: 1px solid var(--border);
   }

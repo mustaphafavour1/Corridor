@@ -25,12 +25,6 @@ export interface DataTableColumn<T> {
   render: (row: T, rowIndex: number) => React.ReactNode;
 }
 
-const ALIGN_CLASS: Record<NonNullable<DataTableColumn<unknown>["align"]>, string> = {
-  left: "text-left",
-  right: "text-right",
-  center: "text-center",
-};
-
 export function DataTable<T>({
   columns,
   rows,
@@ -51,7 +45,15 @@ export function DataTable<T>({
           {columns.map((col) => (
             <th
               key={col.key}
-              className={cn(col.align && col.align !== "left" && ALIGN_CLASS[col.align], col.headerClassName)}
+              // Inline style, not a class: the base .data-table thead th rule
+              // sets text-align on the compound selector `.data-table thead th`,
+              // which — being a class + 2 tags — beats a bare utility class like
+              // .text-right on specificity alone, no matter which one loads
+              // last. Inline style always wins over any class-based rule, so
+              // this is the one thing that can guarantee the header can never
+              // silently drift out of sync with its column's cells again.
+              style={{ textAlign: col.align ?? "left" }}
+              className={col.headerClassName}
             >
               {col.label}
             </th>
@@ -68,10 +70,8 @@ export function DataTable<T>({
             {columns.map((col) => (
               <td
                 key={col.key}
-                className={cn(
-                  col.align && col.align !== "left" && ALIGN_CLASS[col.align],
-                  typeof col.cellClassName === "function" ? col.cellClassName(row) : col.cellClassName,
-                )}
+                style={{ textAlign: col.align ?? "left" }}
+                className={typeof col.cellClassName === "function" ? col.cellClassName(row) : col.cellClassName}
               >
                 {col.render(row, i)}
               </td>

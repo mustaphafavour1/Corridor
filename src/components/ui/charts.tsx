@@ -55,7 +55,7 @@ export function AreaTrend({
   const id = React.useId().replace(/:/g, "");
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={data} margin={{ top: 6, right: 8, left: 4, bottom: 0 }}>
+      <AreaChart data={data} margin={{ top: 16, right: 8, left: 4, bottom: 12 }}>
         <defs>
           <linearGradient id={`grad-${id}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={color} stopOpacity={0.28} />
@@ -225,6 +225,7 @@ export function RankBars({
   valueFormatter,
   labelWidth = "w-16",
   mono = true,
+  gap = "space-y-2",
 }: {
   items: { label: string; value: number; color?: string }[];
   valueFormatter?: (v: number) => string;
@@ -232,10 +233,13 @@ export function RankBars({
    *  (e.g. partner names) than the default, tuned for short corridor codes. */
   labelWidth?: string;
   mono?: boolean;
+  /** Tailwind space-y-* class between rows — widen when the list should
+   *  fill a taller card instead of leaving dead space beneath it. */
+  gap?: string;
 }) {
   const max = Math.max(...items.map((i) => i.value), 1);
   return (
-    <div className="space-y-2">
+    <div className={gap}>
       {items.map((it, i) => (
         <div key={i} className="flex items-center gap-2">
           <span

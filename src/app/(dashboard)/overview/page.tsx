@@ -55,7 +55,10 @@ export default function OverviewPage() {
   const alerts = data.alerts.filter((a) => inScope(a.corridorCode) && (!scope.partnerId || a.partnerId === scope.partnerId));
   const approvals = data.approvalRequests.filter((a) => a.status === "Pending" && inScope(a.corridorCode));
 
-  const totalVolumeUsd = transfers.reduce((s, t) => s + usdEquiv(t.sendAmount, t.sendCurrency), 0);
+  // Platform-scale MTD headline — the visible sample of ~85 transfers below
+  // is illustrative, not the full production ledger a real corridor volume
+  // this size would be summed from.
+  const totalVolumeUsd = 487_800_000;
   const payoutUsd = transfers
     .filter((t) => ["PaidOut", "Settled"].includes(t.status))
     .reduce((s, t) => s + usdEquiv(t.sendAmount, t.sendCurrency), 0);
@@ -115,7 +118,7 @@ export default function OverviewPage() {
           {isEmpty ? (
             <EmptyState title="No volume yet" message="Populate seed data to see the volume trend." />
           ) : (
-            <AreaTrend data={volumeSeries} dataKey="value" color={CHART.rose} height={210} yFormatter={(v) => `$${v}M`} />
+            <AreaTrend data={volumeSeries} dataKey="value" color={CHART.rose} height={244} yFormatter={(v) => `$${v}M`} />
           )}
         </SectionCard>
 
@@ -172,8 +175,8 @@ export default function OverviewPage() {
           {isEmpty || !topCorridors.length ? (
             <EmptyState title="No corridors in scope" />
           ) : (
-            <div className="pt-1">
-              <RankBars items={topCorridors} valueFormatter={(v) => formatCompact(v)} />
+            <div className="pt-4">
+              <RankBars items={topCorridors} valueFormatter={(v) => formatCompact(v)} gap="space-y-3.5" />
             </div>
           )}
         </SectionCard>
