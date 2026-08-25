@@ -159,7 +159,9 @@ export default function AnalyticsPage() {
           {isEmpty || !caseTypeCounts.length ? (
             <EmptyState title="No cases" />
           ) : (
-            <RankBars items={caseTypeCounts} labelWidth="w-20" mono={false} />
+            <div className="pt-4">
+              <RankBars items={caseTypeCounts} labelWidth="w-20" mono={false} gap="space-y-6" />
+            </div>
           )}
         </SectionCard>
 
@@ -168,7 +170,9 @@ export default function AnalyticsPage() {
           {isEmpty || !hitsByList.length ? (
             <EmptyState title="No screening hits" />
           ) : (
-            <RankBars items={hitsByList} labelWidth="w-14" />
+            <div className="pt-4">
+              <RankBars items={hitsByList} labelWidth="w-14" gap="space-y-6" />
+            </div>
           )}
         </SectionCard>
 

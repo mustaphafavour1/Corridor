@@ -72,7 +72,7 @@ export default function OverviewPage() {
 
   const topCorridors = [...corridors]
     .sort((a, b) => b.monthlyVolume - a.monthlyVolume)
-    .slice(0, 6)
+    .slice(0, 7)
     .map((c) => ({ label: c.code, value: c.monthlyVolume, color: CHART.rose }));
 
   const transferColumns: DataTableColumn<Transfer>[] = [
@@ -176,7 +176,7 @@ export default function OverviewPage() {
             <EmptyState title="No corridors in scope" />
           ) : (
             <div className="pt-4">
-              <RankBars items={topCorridors} valueFormatter={(v) => formatCompact(v)} gap="space-y-3.5" />
+              <RankBars items={topCorridors} valueFormatter={(v) => formatCompact(v)} gap="space-y-2.5" />
             </div>
           )}
         </SectionCard>

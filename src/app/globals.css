@@ -166,13 +166,21 @@ body {
     /* Alignment is set per-column via inline style on the <th> itself
        (see DataTable) — never here, so it can't fight a higher-specificity
        compound selector like this one. */
-    @apply text-xs font-medium uppercase text-content-faint py-2 pr-3 whitespace-nowrap;
+    @apply text-xs font-medium uppercase text-content-faint py-2 pl-2.5 pr-2.5 whitespace-nowrap;
     letter-spacing: 0.06em;
     border-bottom: 1px solid var(--border);
   }
   .data-table tbody td {
-    @apply text-xs text-content-faint py-[9px] pr-3 align-middle;
+    @apply text-xs text-content-faint py-[9px] pl-2.5 pr-2.5 align-middle;
     border-bottom: 1px solid var(--border-faint);
+  }
+  /* Every column gets padding on both sides so the gutter between any two
+     columns is the same regardless of which side is right-aligned — but the
+     first column would then sit indented under the card/section title above
+     it, so its left padding is cancelled back to flush. */
+  .data-table thead th:first-child,
+  .data-table tbody td:first-child {
+    padding-left: 0;
   }
   .data-table tbody tr:last-child td {
     border-bottom: none;

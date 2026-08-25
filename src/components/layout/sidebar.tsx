@@ -56,8 +56,8 @@ export function Sidebar() {
                       <li key={item.href}>
                         <div className="flex cursor-default items-center gap-2.5 rounded-lg px-3 py-2.5 text-[11.5px] text-content-dim">
                           <Icon size={15} strokeWidth={1.75} className="shrink-0 opacity-60" />
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full border border-content-dim" aria-hidden />
                           <span className="flex-1 truncate whitespace-nowrap">{item.label}</span>
+                          <span className="h-1 w-1 shrink-0 rounded-full border border-content-dim" aria-hidden />
                         </div>
                       </li>
                     );
