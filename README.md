@@ -1,6 +1,6 @@
-# Corridor
+# CorriDoor
 
-**Global cross-border payments & payout-orchestration platform.** Corridor manages the
+**Global cross-border payments & payout-orchestration platform.** CorriDoor manages the
 end-to-end lifecycle of a money transfer — onboarding senders, beneficiaries and payout
 partners, through compliance screening, FX, routing and settlement, to reconciliation and
 regulatory reporting — across many country corridors, currencies and local payout partners.

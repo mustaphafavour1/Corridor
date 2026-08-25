@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Currency symbols for the currencies Corridor moves. */
+/** Currency symbols for the currencies CorriDoor moves. */
 export const CURRENCY_SYMBOL: Record<string, string> = {
   USD: "$",
   EUR: "€",

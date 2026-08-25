@@ -119,16 +119,16 @@ export const roles: Role[] = [
 ];
 
 export const users: User[] = [
-  { id: "USR-001", firstName: "Amara", lastName: "Diallo", email: "amara.diallo@corridor.io", phone: "+44 20 7946 0011", roleId: "role-super", status: "Active", assignedRegions: [], assignedCorridors: [], lastLogin: "2026-08-14T08:05:00Z", createdOn: "2023-01-10", avatarColor: "var(--accent)" },
-  { id: "USR-002", firstName: "Ruth", lastName: "Okafor", email: "ruth.okafor@corridor.io", phone: "+234 812 233 4455", roleId: "role-admin", status: "Active", assignedRegions: ["reg-waf"], assignedCorridors: ["GB-NG", "NL-NG"], lastLogin: "2026-08-14T07:40:00Z", createdOn: "2023-05-19", avatarColor: "var(--info)" },
-  { id: "USR-003", firstName: "Diego", lastName: "Ramírez", email: "diego.ramirez@corridor.io", phone: "+52 55 1234 5678", roleId: "role-admin", status: "Active", assignedRegions: ["reg-latam"], assignedCorridors: ["US-MX"], lastLogin: "2026-08-13T21:15:00Z", createdOn: "2023-08-02", avatarColor: "var(--success)" },
-  { id: "USR-004", firstName: "Mariam", lastName: "Haddad", email: "mariam.haddad@corridor.io", phone: "+33 1 42 68 53 00", roleId: "role-compliance", status: "Active", assignedRegions: [], assignedCorridors: [], lastLogin: "2026-08-14T06:22:00Z", createdOn: "2024-02-14", avatarColor: "var(--violet)" },
-  { id: "USR-005", firstName: "Sven", lastName: "Larsson", email: "sven.larsson@corridor.io", phone: "+44 20 7946 0042", roleId: "role-treasury", status: "Active", assignedRegions: [], assignedCorridors: [], lastLogin: "2026-08-14T05:50:00Z", createdOn: "2024-06-01", avatarColor: "var(--warning)" },
+  { id: "USR-001", firstName: "Amara", lastName: "Diallo", email: "amara.diallo@corridoor.io", phone: "+44 20 7946 0011", roleId: "role-super", status: "Active", assignedRegions: [], assignedCorridors: [], lastLogin: "2026-08-14T08:05:00Z", createdOn: "2023-01-10", avatarColor: "var(--accent)" },
+  { id: "USR-002", firstName: "Ruth", lastName: "Okafor", email: "ruth.okafor@corridoor.io", phone: "+234 812 233 4455", roleId: "role-admin", status: "Active", assignedRegions: ["reg-waf"], assignedCorridors: ["GB-NG", "NL-NG"], lastLogin: "2026-08-14T07:40:00Z", createdOn: "2023-05-19", avatarColor: "var(--info)" },
+  { id: "USR-003", firstName: "Diego", lastName: "Ramírez", email: "diego.ramirez@corridoor.io", phone: "+52 55 1234 5678", roleId: "role-admin", status: "Active", assignedRegions: ["reg-latam"], assignedCorridors: ["US-MX"], lastLogin: "2026-08-13T21:15:00Z", createdOn: "2023-08-02", avatarColor: "var(--success)" },
+  { id: "USR-004", firstName: "Mariam", lastName: "Haddad", email: "mariam.haddad@corridoor.io", phone: "+33 1 42 68 53 00", roleId: "role-compliance", status: "Active", assignedRegions: [], assignedCorridors: [], lastLogin: "2026-08-14T06:22:00Z", createdOn: "2024-02-14", avatarColor: "var(--violet)" },
+  { id: "USR-005", firstName: "Sven", lastName: "Larsson", email: "sven.larsson@corridoor.io", phone: "+44 20 7946 0042", roleId: "role-treasury", status: "Active", assignedRegions: [], assignedCorridors: [], lastLogin: "2026-08-14T05:50:00Z", createdOn: "2024-06-01", avatarColor: "var(--warning)" },
   { id: "USR-006", firstName: "Tayo", lastName: "Oviosu", email: "tayo@paga.ng", phone: "+234 803 000 1122", roleId: "role-partner", status: "Active", assignedRegions: ["reg-waf"], assignedCorridors: ["GB-NG"], partnerId: "PTR-001", lastLogin: "2026-08-14T08:30:00Z", createdOn: "2023-04-11", avatarColor: "var(--brand)" },
   { id: "USR-007", firstName: "Jean", lastName: "Lhuillier", email: "jean@cebuana.com", phone: "+63 917 000 3344", roleId: "role-partner", status: "Active", assignedRegions: ["reg-sea"], assignedCorridors: ["US-PH", "GB-PH"], partnerId: "PTR-010", lastLogin: "2026-08-14T01:12:00Z", createdOn: "2022-09-27", avatarColor: "var(--brand-muted)" },
   { id: "USR-008", firstName: "Nabil", lastName: "Adel", email: "nabil@cashplus.ma", phone: "+212 522 000 556", roleId: "role-partner", status: "Active", assignedRegions: ["reg-nafr"], assignedCorridors: ["NL-MA", "GB-MA"], partnerId: "PTR-013", lastLogin: "2026-08-13T18:44:00Z", createdOn: "2023-08-19", avatarColor: "var(--info)" },
-  { id: "USR-009", firstName: "Priya", lastName: "Menon", email: "priya.menon@corridor.io", phone: "+44 20 7946 0088", roleId: "role-compliance", status: "Active", assignedRegions: ["reg-sasia"], assignedCorridors: [], lastLogin: "2026-08-13T16:05:00Z", createdOn: "2024-09-11", avatarColor: "var(--violet)" },
-  { id: "USR-010", firstName: "Felix", lastName: "Adeyemi", email: "felix.adeyemi@corridor.io", phone: "+234 809 555 7788", roleId: "role-admin", status: "Inactive", assignedRegions: ["reg-waf"], assignedCorridors: [], lastLogin: "2026-07-28T10:00:00Z", createdOn: "2024-03-20", avatarColor: "var(--text-muted)" },
+  { id: "USR-009", firstName: "Priya", lastName: "Menon", email: "priya.menon@corridoor.io", phone: "+44 20 7946 0088", roleId: "role-compliance", status: "Active", assignedRegions: ["reg-sasia"], assignedCorridors: [], lastLogin: "2026-08-13T16:05:00Z", createdOn: "2024-09-11", avatarColor: "var(--violet)" },
+  { id: "USR-010", firstName: "Felix", lastName: "Adeyemi", email: "felix.adeyemi@corridoor.io", phone: "+234 809 555 7788", roleId: "role-admin", status: "Inactive", assignedRegions: ["reg-waf"], assignedCorridors: [], lastLogin: "2026-07-28T10:00:00Z", createdOn: "2024-03-20", avatarColor: "var(--text-muted)" },
 ];
 
 export const reports: Report[] = [
@@ -159,10 +159,10 @@ export const apiKeys: ApiKey[] = [
 ];
 
 export const webhooks: Webhook[] = [
-  { id: "WH-01", url: "https://ops.corridor.io/hooks/transfers", events: ["transfer.created", "transfer.settled", "transfer.failed"], status: "Active", successRate: 99.8, lastDelivery: "2026-08-14T08:31:00Z" },
-  { id: "WH-02", url: "https://treasury.corridor.io/hooks/liquidity", events: ["float.low", "float.critical"], status: "Active", successRate: 100, lastDelivery: "2026-08-14T07:42:00Z" },
+  { id: "WH-01", url: "https://ops.corridoor.io/hooks/transfers", events: ["transfer.created", "transfer.settled", "transfer.failed"], status: "Active", successRate: 99.8, lastDelivery: "2026-08-14T08:31:00Z" },
+  { id: "WH-02", url: "https://treasury.corridoor.io/hooks/liquidity", events: ["float.low", "float.critical"], status: "Active", successRate: 100, lastDelivery: "2026-08-14T07:42:00Z" },
   { id: "WH-03", url: "https://partner.paga.ng/callbacks/payout", events: ["payout.instructed", "payout.confirmed"], status: "Failing", successRate: 91.2, lastDelivery: "2026-08-14T08:12:00Z" },
-  { id: "WH-04", url: "https://legacy.corridor.io/hooks/all", events: ["*"], status: "Disabled", successRate: 0, lastDelivery: "2026-06-01T00:00:00Z" },
+  { id: "WH-04", url: "https://legacy.corridoor.io/hooks/all", events: ["*"], status: "Disabled", successRate: 0, lastDelivery: "2026-06-01T00:00:00Z" },
 ];
 
 export const eventLogs: EventLog[] = [

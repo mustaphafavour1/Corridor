@@ -9,7 +9,7 @@ import { Tooltip } from "@/components/ui/overlay";
 
 // Top bar — v1 "Split": search at the far left, date / notifications / profile
 // grouped at the far right, open space between. Rotated per dashboard per the
-// design-taste doc; Corridor is assigned v1.
+// design-taste doc; CorriDoor is assigned v1.
 export function Topbar() {
   const { demoMode, setDemoMode, activeUser, data } = useApp();
   const unresolved = data.alerts.filter((a) => !a.resolved).length;

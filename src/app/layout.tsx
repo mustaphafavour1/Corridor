@@ -14,7 +14,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Corridor — Cross-Border Payments & Payout Orchestration",
+  title: "CorriDoor — Cross-Border Payments & Payout Orchestration",
   description:
     "Institutional platform for orchestrating cross-border payments and payouts across corridors, currencies and local payout partners.",
 };

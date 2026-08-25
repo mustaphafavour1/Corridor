@@ -17,7 +17,7 @@ export function Brand() {
         <ArrowLeftRight size={14} className="text-accent-contrast" strokeWidth={2.4} />
       </span>
       <span className="leading-none">
-        <span className="block text-md font-bold tracking-tight text-content">Corridor</span>
+        <span className="block text-md font-bold tracking-tight text-content">CorriDoor</span>
         <span className="block text-3xs uppercase tracking-[0.16em] text-content-faint mt-0.5">
           Payments Ops
         </span>

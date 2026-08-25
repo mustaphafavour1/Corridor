@@ -106,7 +106,7 @@ export default function SettingsPage() {
               </div>
 
               <p className="mt-3 text-2xs text-content-faint">
-                Every account in the system is listed below by name and role — only the personas Corridor has fully
+                Every account in the system is listed below by name and role — only the personas CorriDoor has fully
                 built (Super Admin, Regional Operations Manager, Payout Partner) render a scoped, live view when
                 selected; others still appear so the role model reads as complete.
               </p>
